@@ -1,5 +1,5 @@
 ## Examples
-tor-reloy --- Run a tor relay on openstack with terraform
+tor-relay --- Run a tor relay on openstack with terraform
 
 ## Requirements
 * terraform -> https://www.terraform.io/
@@ -21,5 +21,8 @@ edit variables.tf
   - homeip 
       - allow ssh access to your instance from this ip
 
+## running
+
 * source \<openrc file\>
+* cd into tor-relay
 * terraform apply

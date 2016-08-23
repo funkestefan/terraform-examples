@@ -21,6 +21,12 @@ edit variables.tf
   - homeip 
       - allow ssh access to your instance from this ip
 
+edit cloud-init/tor-relay.yaml
+
+  - user
+    - there is a user "stefan" being added to the system for my convenience. Change that to whatever you like or remove it entirely.
+
+
 ## running
 
 * source \<openrc file\>

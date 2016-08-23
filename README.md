@@ -9,17 +9,17 @@ tor-reloy --- Run a tor relay on openstack with terraform
 edit variables.tf
 
   - image 
-      replace it with your openstack glance image name for ubuntu 16.04
+      - replace it with your openstack glance image name for ubuntu 16.04
   - flavor 
-      replace it wih any matching openstack flavor for instances
+      - replace it wih any matching openstack flavor for instances
   - external gateway 
-      id to your external gateway for your floating-ip pool
+      - id to your external gateway for your floating-ip pool
   - pool 
-      floating ip pool
+      - floating ip pool
   - tenant_name 
-      name of your openstack tenant
+      - name of your openstack tenant
   - homeip 
-      allow ssh access to your instance from this ip
+      - allow ssh access to your instance from this ip
 
 source <openrc file>
 terraform apply

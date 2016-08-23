@@ -39,7 +39,6 @@ resource "openstack_compute_instance_v2" "terraform-tornode" {
   name = "terra-tor-relay"
   image_name = "${var.image}"
   flavor_name = "${var.flavor}"
-  # key_pair = "${openstack_compute_keypair_v2.terraform.name}"
   user_data = "${file(\"cloud-init/tor-relay.yaml\")}"
   security_groups = [ "${openstack_networking_secgroup_v2.secgroup_tor.id}" ]
   floating_ip = "${openstack_compute_floatingip_v2.torip.address}"

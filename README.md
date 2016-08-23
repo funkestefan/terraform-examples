@@ -21,5 +21,5 @@ edit variables.tf
   - homeip 
       - allow ssh access to your instance from this ip
 
-* source <openrc file>
+* source \<openrc file\>
 * terraform apply

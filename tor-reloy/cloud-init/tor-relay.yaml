@@ -1,0 +1,48 @@
+#cloud-config
+
+users:
+  - name: stefan
+    gecos: Stefan Funke
+    lock-passwd: true
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9UGfpRQ1juRDlsMfGM2lXTeQXSn3cFBmWHCdMya0DAtWNxKRT6O6R62bZOGI4wSQVR3ICKMfij9YAD4AnkYl4HkibYnm2fmD8vQphCdlv7vQnKv5IYYv+KNPpoLB/RQthG1SbIaf8GMNoPiA+8YABapdSgEAbqAoX4WBA2qPNG5VKHYy1lqGh/CJLzSf/PhbjAz7+7Xg3Y+BOz8R+zO+XpAGVqbS6CIIP/x5wvqy7hOmeV2TaqA7jtnx++gWDDQUAUpSalV6T7XIZo6s3+bqhse1uWFKpXmQlqs1ZvEi0wAE6feftbdId9K2KBMyHXiLL+0ds/QWwfb6AYeMp6IHp/5nafVW2gIKKBah0bwdzjMuNr/SMwdYjM6YjB8NJkDqcsLNFkduvvjsGgpr66O+FhacsR9X2ZD1kFCo9fwOqjHWsAlt62P0EaVQ1tuwveHz7U35tJCS+3AFMox5L4pcRc3zKzN3OSkklt+lWpKqQsXlvwvEnSSFayIy9zDGnNkh0Megh2W++yGr9U7h4Ns/LV7P8+uFcHtfZ4zRCrf/SxGEcxDfJHZHqlmRD/gOeJYED2d4X50FCFpogdkE7cc/oEyxyVR10R/G7YPxeqLxINwFMjybOgdo2f4A4VlTwy9qQ10yqS87eP/ycCVhxOm//iu0f5KkNQ28VRebK0Wuq4Q== bundy@wasp'
+
+package_update: false
+package_upgrade: false
+
+hostname: terra-tor-relay
+manage_etc_hosts: true
+
+write_files:
+  - content: |
+      ORPort 443
+      DirPort 80
+      Exitpolicy reject *:*
+      Nickname terrator%ID
+      ContactInfo human@earth
+    permissions: 0644
+    path: /tmp/torrc
+
+  - content: |
+      #!/usr/bin/env bash
+      logger "DEBUG install_tor.sh"
+      rand=$(tr -cd 0-9 </dev/urandom | head -c 7)
+      sed -i 's/%ID/'"$rand"'/' /tmp/torrc
+      echo "deb http://deb.torproject.org/torproject.org xenial main" >>//etc/apt/sources.list
+      echo "deb-src http://deb.torproject.org/torproject.org xenial main" >>//etc/apt/sources.list
+      gpg --keyserver keys.gnupg.net --recv 886DDD89
+      gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get -y update
+      apt-get -y upgrade
+      apt-get -y install tor deb.torproject.org-keyring
+      cp /tmp/torrc /etc/tor/torrc
+      systemctl restart tor
+
+    permissions: 0755
+    path: /tmp/install_tor.sh
+
+runcmd:
+   - /tmp/install_tor.sh

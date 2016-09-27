@@ -5,7 +5,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_1" {
   ethertype = "IPv4"
   protocol = "icmp"
   remote_ip_prefix = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_2" {
@@ -13,7 +13,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_2" {
   ethertype = "IPv4"
   protocol = "icmp"
   remote_ip_prefix = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_3" {
@@ -23,7 +23,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_3" {
   port_range_min = 22
   port_range_max = 22
   remote_ip_prefix = "${var.sshallow}"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_4" {
@@ -33,7 +33,7 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_4" {
   port_range_min = 22
   port_range_max = 22
   remote_ip_prefix = "${var.sshallow}"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_5" {
@@ -43,5 +43,5 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_5" {
   port_range_min = 22
   port_range_max = 22
   remote_ip_prefix = "${var.homenet}"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }

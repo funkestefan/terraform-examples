@@ -6,5 +6,6 @@ resource "openstack_compute_instance_v2" "terraform-db" {
   security_groups = [ "${openstack_networking_secgroup_v2.secgroup_wordpressdb.id}" ]
   network {
     uuid = "${openstack_networking_network_v2.terraform.id}"
+    fixed_ip_v4 = "192.168.42.3"
   }
 }

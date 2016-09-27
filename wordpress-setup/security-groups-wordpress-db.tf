@@ -1,9 +1,4 @@
-## Tor Relay Node
-
-resource "openstack_networking_secgroup_v2" "secgroup_wordpressdb" {
-  name = "terra-secgroup_wordpressdb"
-  description = "Security Group for wordpress database node"
-}
+## Database Node Security Groups
 
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_db1" {
   direction = "ingress"

@@ -29,3 +29,7 @@ variable "sshallow" {
 variable "localnet" {
     default = "192.168.42.0/24"
 }
+
+variable "homenet" {
+    default = "91.66.60.79/32"
+}

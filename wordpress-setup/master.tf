@@ -34,3 +34,8 @@ resource "openstack_compute_floatingip_v2" "wordpressip" {
   pool = "${var.pool}"
   depends_on = ["openstack_networking_router_interface_v2.terraform"]
 }
+
+resource "openstack_compute_floatingip_v2" "adminip" {
+  pool = "${var.pool}"
+  depends_on = ["openstack_networking_router_interface_v2.terraform"]
+}

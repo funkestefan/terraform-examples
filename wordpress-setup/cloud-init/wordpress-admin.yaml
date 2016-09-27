@@ -13,7 +13,7 @@ users:
 package_update: true
 package_upgrade: true
 
-hostname: terra-wordpress-lb0
+hostname: terra-wordpress-admin
 manage_etc_hosts: true
 
 packages:

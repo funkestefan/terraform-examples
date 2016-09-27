@@ -7,6 +7,6 @@ resource "openstack_compute_instance_v2" "terraform-lb" {
   floating_ip = "${openstack_compute_floatingip_v2.wordpressip.address}"
   network {
     uuid = "${openstack_networking_network_v2.terraform.id}"
-    fixed_ip_v4 = "192.168.42.2"
+    fixed_ip_v4 = "192.168.42.3"
   }
 }

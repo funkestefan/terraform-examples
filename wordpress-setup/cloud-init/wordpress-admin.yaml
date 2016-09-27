@@ -1,0 +1,30 @@
+#cloud-config
+
+users:
+  - name: stefan
+    gecos: Stefan Funke
+    lock-passwd: true
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9UGfpRQ1juRDlsMfGM2lXTeQXSn3cFBmWHCdMya0DAtWNxKRT6O6R62bZOGI4wSQVR3ICKMfij9YAD4AnkYl4HkibYnm2fmD8vQphCdlv7vQnKv5IYYv+KNPpoLB/RQthG1SbIaf8GMNoPiA+8YABapdSgEAbqAoX4WBA2qPNG5VKHYy1lqGh/CJLzSf/PhbjAz7+7Xg3Y+BOz8R+zO+XpAGVqbS6CIIP/x5wvqy7hOmeV2TaqA7jtnx++gWDDQUAUpSalV6T7XIZo6s3+bqhse1uWFKpXmQlqs1ZvEi0wAE6feftbdId9K2KBMyHXiLL+0ds/QWwfb6AYeMp6IHp/5nafVW2gIKKBah0bwdzjMuNr/SMwdYjM6YjB8NJkDqcsLNFkduvvjsGgpr66O+FhacsR9X2ZD1kFCo9fwOqjHWsAlt62P0EaVQ1tuwveHz7U35tJCS+3AFMox5L4pcRc3zKzN3OSkklt+lWpKqQsXlvwvEnSSFayIy9zDGnNkh0Megh2W++yGr9U7h4Ns/LV7P8+uFcHtfZ4zRCrf/SxGEcxDfJHZHqlmRD/gOeJYED2d4X50FCFpogdkE7cc/oEyxyVR10R/G7YPxeqLxINwFMjybOgdo2f4A4VlTwy9qQ10yqS87eP/ycCVhxOm//iu0f5KkNQ28VRebK0Wuq4Q== bundy@wasp'
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDzJ51cNXJJWfW+EehZFt9YoUi+dNmXaAjoi6vqPhEZHNXzYRpwy/iyR+y2S1ItGdaypMutehPIuXK6RtBdpTG/blnlmmA9ASrYuqh5qsI5b78eSITMfDKnMd55ccjqZ8sIC/DZAaPVv5VOEJEmZniO+6JwDq0+A9tSOf/ZHWDVhrbKTN4O55WYnrPvJupuA1xP5YEOwF86atx8AwSDELiecZh34o6V0EbkQCvaRAMluph4EoDPqbE0RxdcHF0XueME3P2MDdV813UCdl7ka6qaoKkPJTM7Or0xOlqtQybXTLgebR9JgeihRZgnio/K06eSmK4p2aPm0p5SV93WcxkW/XM2U+lXEL21bjbYXL5nr7UzBptsqG7/GHCJD7PqssYZdXV+l/rKR50PqGsKBhbiImk0T8IVvznt/H9f35YLADiRt9VlRe7uURMO5VkWnY9aYsvvxv/Z3H2hqssbPT1H+zqqWI4EZi6++GpeRbL/aLNz0s6e53yerhZHNZtN1CkRmO2YI83I4BtbeO8rIuxZM8AOJ+vMdXJbtQFZT8cHPfB8grt6rCUf/HderR8eulXgkmRROchXAAm9uK1Dm5O07up8qVu9ODWajVUD+X2uYFYf3wQ1w5y3Hdx3rZrH2Cs3qjL3VhYyG84NoJZBdTPPp80MaAWdaRNtoHOfVZY3KQ== SFunke'
+
+package_update: true
+package_upgrade: true
+
+hostname: terra-wordpress-lb0
+manage_etc_hosts: true
+
+packages:
+  - curl
+
+write_files:
+  - content: |
+      #!/usr/bin/env bash
+      export DEBIAN_FRONTEND=noninteractive
+    permissions: 0700
+    path: /tmp/install_admin.sh
+
+runcmd:
+   - /tmp/install_admin.sh

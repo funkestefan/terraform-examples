@@ -48,15 +48,6 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_app5" {
   security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_app.id}"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_app6" {
-  direction = "egress"
-  ethertype = "IPv4"
-  protocol = "tcp"
-  remote_ip_prefix = "192.168.42.0/24"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_app.id}"
-}
-
-
 ## glusterfs rules
 resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_app_gfs1" {
   # portmap/rpcbind

@@ -19,9 +19,6 @@ manage_etc_hosts: true
 packages:
   - curl
 
-mounts:
-  - [ vdb, /var/lib/mysql, "ext4", "defaults", "0", "1" ]
-
 write_files:
   - content: |
       #!/usr/bin/env bash

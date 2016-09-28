@@ -20,7 +20,7 @@ packages:
   - curl
 
 mounts:
-  - [ vdb, /var/lib/mysql, "auto", "defaults", "0", "1" ]
+  - [ vdb, /var/lib/mysql, "ext4", "defaults", "0", "1" ]
 
 write_files:
   - content: |

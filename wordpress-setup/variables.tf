@@ -19,7 +19,7 @@ variable "pool" {
 }
 
 variable "tenant_name" {
-    default = "syseleveneigenbedarf-syseleven-presales"
+    default = "syseleveneigenbedarf-sfunke-sf-techdemo"
 }
 
 variable "sshallow" {

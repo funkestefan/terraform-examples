@@ -1,8 +1,3 @@
-resource "openstack_blockstorage_volume_v2" "terraform-db_volume" {
-  region = "cbk1"
-  name = "db_volume"
-  description 
-
 resource "openstack_compute_instance_v2" "terraform-db" {
   name = "terra-wordpress-db"
   image_name = "${var.image}"
@@ -13,7 +8,4 @@ resource "openstack_compute_instance_v2" "terraform-db" {
     uuid = "${openstack_networking_network_v2.terraform.id}"
     fixed_ip_v4 = "192.168.42.4"
   }
-  volume {
-    volume_id = "${var.db_volume}"
-  )
 }

@@ -33,3 +33,7 @@ variable "localnet" {
 variable "homenet" {
     default = "91.66.60.79/32"
 }
+
+variable "db_volume" {
+    default = "8d265a06-07c0-403c-97f1-2b05e127a28e"
+}

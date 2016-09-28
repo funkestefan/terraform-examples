@@ -19,6 +19,7 @@ packages:
   - nginx
   - curl
   - glusterfs-server
+  - attr
 
 write_files:
   - content: |

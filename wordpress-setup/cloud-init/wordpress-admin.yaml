@@ -18,6 +18,7 @@ manage_etc_hosts: true
 
 packages:
   - curl
+  - unzip
 
 write_files:
   - content: |
@@ -25,6 +26,22 @@ write_files:
       export DEBIAN_FRONTEND=noninteractive
     permissions: 0700
     path: /tmp/install_admin.sh
+  - content: |
+       #!/usr/bin/env bash
+       until id stefan > /dev/null; do sleep 2; done
+       url="https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip"
+       bin="/usr/local/bin"
+       tmp="/tmp/consul.zip"
+       /bin/mkdir -p $bin
+       /usr/bin/curl -s -o $tmp $url
+       /usr/bin/unzip -q $tmp -d $bin
+       /bin/chown root:root $bin/consul
+       if [ -f $tmp ]; then rm $tmp; fi
+       if [ -x $bin/consul ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
+    path: /tmp/consul-install.sh
+    owner: root
+    permissions: 0700
 
 runcmd:
    - /tmp/install_admin.sh
+   - /tmp/consul-install.sh

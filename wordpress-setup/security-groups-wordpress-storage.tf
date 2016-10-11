@@ -103,3 +103,34 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_storage_gfs5" {
   remote_ip_prefix = "192.168.42.0/24"
   security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_storage.id}"
 }
+
+## Consul
+resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_storage_consul_1" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  protocol = "tcp"
+  port_range_min = 8300
+  port_range_max = 8302
+  remote_ip_prefix = "${var.localnet}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_storage.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_storage_consul_2" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  protocol = "udp"
+  port_range_min = 8300
+  port_range_max = 8302
+  remote_ip_prefix = "${var.localnet}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_storage.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_storage_consul_3" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  protocol = "udp"
+  port_range_min = 8600
+  port_range_max = 8600
+  remote_ip_prefix = "${var.localnet}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_storage.id}"
+}

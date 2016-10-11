@@ -32,7 +32,7 @@ write_files:
       /tmp/consul-install-client.sh
 
     permissions: 0700
-    path: /tmp/install_app.sh
+    path: /tmp/install_storage.sh
   - content: |
        #!/usr/bin/env bash
        until id stefan > /dev/null; do sleep 2; done
@@ -81,4 +81,4 @@ write_files:
     permissions: 0700
 
 runcmd:
-   - /tmp/install_app.sh
+   - /tmp/install_storage.sh

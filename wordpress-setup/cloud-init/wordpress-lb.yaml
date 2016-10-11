@@ -47,9 +47,9 @@ write_files:
        cat <<EOF> /etc/consul.d/consul.json
        {
              "datacenter": "cbk1",
-               "data_dir": "/tmp/consul",
-                 "bootstrap_expect": 3,
-                   "server": true
+             "data_dir": "/tmp/consul",
+             "bootstrap_expect": 3,
+             "server": true
        }
        EOF
 

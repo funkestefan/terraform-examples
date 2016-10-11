@@ -19,6 +19,7 @@ manage_etc_hosts: true
 packages:
   - nginx
   - curl
+  - unzip
 
 write_files:
   - content: |
@@ -26,8 +27,56 @@ write_files:
       export DEBIAN_FRONTEND=noninteractive
       mv /etc/nginx/nginx_template.conf /etc/nginx/nginx.conf
       rm /etc/nginx/sites-enabled/default  
+      /tmp/consul-install.sh
+      until consul join 192.168.42.2 192.168.42.3 192.168.42.4; do sleep 2; done
     permissions: 0700
     path: /tmp/install_lb.sh
+  - content: |
+       #!/usr/bin/env bash
+       until id stefan > /dev/null; do sleep 2; done
+       url="https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip"
+       bin="/usr/local/bin"
+       tmp="/tmp/consul.zip"
+       /bin/mkdir -p $bin
+       /usr/bin/curl -s -o $tmp $url
+       /usr/bin/unzip -q $tmp -d $bin
+       /bin/chown root:root $bin/consul
+       if [ -f $tmp ]; then rm $tmp; fi
+       if [ ! -x $bin/consul ]; then exit 99; fi
+       mkdir -p /etc/consul.d
+       cat <<EOF> /etc/consul.d/consul.json
+       {
+             "datacenter": "cbk1",
+               "data_dir": "/tmp/consul",
+                 "bootstrap_expect": 3,
+                   "server": true
+       }
+       EOF
+
+       cat <<EOF> /etc/systemd/system/consul.service
+       [Unit]
+       Description=consul agent
+       Requires=network-online.target
+       After=network-online.target
+
+       [Service]
+       User=root
+       EnvironmentFile=-/etc/default/consul
+       Environment=GOMAXPROCS=2
+       Restart=on-failure
+       ExecStart=/usr/local/bin/consul agent \$OPTIONS -config-dir=/etc/consul.d
+       ExecReload=/bin/kill -HUP \$MAINPID
+       KillSignal=SIGINT
+
+       [Install]
+       WantedBy=multi-user.target
+       EOF
+
+       systemctl enable consul
+       systemctl restart consul
+    path: /tmp/consul-install.sh
+    owner: root
+    permissions: 0700
 
 runcmd:
    - /tmp/install_lb.sh

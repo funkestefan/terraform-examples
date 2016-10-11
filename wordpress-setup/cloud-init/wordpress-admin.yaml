@@ -24,24 +24,64 @@ write_files:
   - content: |
       #!/usr/bin/env bash
       export DEBIAN_FRONTEND=noninteractive
+      /tmp/consul-install.sh
+      until consul join 192.168.42.2 192.168.42.3 192.168.42.4; do sleep 2; done
     permissions: 0700
     path: /tmp/install_admin.sh
   - content: |
        #!/usr/bin/env bash
        until id stefan > /dev/null; do sleep 2; done
        url="https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip"
+       url2="https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_web_ui.zip"
        bin="/usr/local/bin"
        tmp="/tmp/consul.zip"
+       tmp2="/tmp/consulweb.zip"
+       web="/tmp/consulweb"
        /bin/mkdir -p $bin
+       /bin/mkdir -p $web
        /usr/bin/curl -s -o $tmp $url
+       /usr/bin/curl -s -o $tmp2 $url2
        /usr/bin/unzip -q $tmp -d $bin
+       /usr/bin/unzip -q $tmp2 -d $web
        /bin/chown root:root $bin/consul
        if [ -f $tmp ]; then rm $tmp; fi
-       if [ -x $bin/consul ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
+       if [ -f $tmp2 ]; then rm $tmp2; fi
+       if [ ! -x $bin/consul ]; then exit 99; fi
+       mkdir -p /etc/consul.d
+       cat <<EOF> /etc/consul.d/consul.json
+       {
+             "datacenter": "cbk1",
+             "data_dir": "/tmp/consul",
+             "bootstrap_expect": 3,
+             "server": true,
+             "ui_dir": "/tmp/consulweb"
+       }
+       EOF
+
+       cat <<EOF> /etc/systemd/system/consul.service
+       [Unit]
+       Description=consul agent
+       Requires=network-online.target
+       After=network-online.target
+
+       [Service]
+       User=root
+       EnvironmentFile=-/etc/default/consul
+       Environment=GOMAXPROCS=2
+       Restart=on-failure
+       ExecStart=/usr/local/bin/consul agent \$OPTIONS -config-dir=/etc/consul.d
+       ExecReload=/bin/kill -HUP \$MAINPID
+       KillSignal=SIGINT
+
+       [Install]
+       WantedBy=multi-user.target
+       EOF
+
+       systemctl enable consul
+       systemctl restart consul
     path: /tmp/consul-install.sh
     owner: root
     permissions: 0700
 
 runcmd:
    - /tmp/install_admin.sh
-   - /tmp/consul-install.sh

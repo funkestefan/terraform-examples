@@ -32,5 +32,5 @@ upstream frontend {
 }
 
 upstream consul {
-  server 192.168.42.3:8500
+  server 192.168.42.2:8500;
 }

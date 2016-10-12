@@ -19,3 +19,8 @@ resource "openstack_networking_secgroup_v2" "secgroup_wordpress_storage" {
   name = "terra-secgroup_wordpress_storage"
   description = "Security Group for wordpress storage nodes"
 }
+
+resource "openstack_networking_secgroup_v2" "secgroup_wordpress_app" {
+  name = "terra-secgroup_wordpress_app"
+  description = "Security Group for wordpress appserver nodes"
+}

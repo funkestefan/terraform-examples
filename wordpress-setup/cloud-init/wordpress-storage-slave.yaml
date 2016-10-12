@@ -55,6 +55,19 @@ write_files:
        }
        EOF
 
+       cat <<EOF> /etc/consul.d/storage-health.json
+       {
+             "service": {
+               "name": "storage",
+               "tags": ["gluster", "storage"],
+               "check": {
+                 "script": "gluster peer status",
+                 "interval": "10s"
+               }
+             }
+       }
+       EOF
+
        cat <<EOF> /etc/systemd/system/consul.service
        [Unit]
        Description=consul agent

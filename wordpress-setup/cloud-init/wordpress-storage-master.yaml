@@ -30,7 +30,7 @@ write_files:
       apt-get install -y python-software-properties;
       add-apt-repository -y ppa:gluster/glusterfs-3.5;
       /tmp/consul-install-client.sh
-      sleep 30;
+      sleep 60;
       export slave=$(dig +short @127.0.0.1 -p 8600 terra-wordpress-storage-slave0.node.consul)
       export PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4/)
       gluster peer probe $slave;
@@ -58,6 +58,18 @@ write_files:
              "data_dir": "/tmp/consul",
              "start_join": ["192.168.42.2", "192.168.42.3", "192.168.42.4"],
              "server": false
+       }
+       EOF
+       cat <<EOF> /etc/consul.d/storage-health.json
+       {
+             "service": {
+               "name": "storage",
+               "tags": ["gluster", "storage"],
+               "check": {
+                 "script": "gluster peer status",
+                 "interval": "10s"
+               }
+             }
        }
        EOF
 

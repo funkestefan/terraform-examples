@@ -26,7 +26,8 @@ write_files:
       #!/usr/bin/env bash
       export DEBIAN_FRONTEND=noninteractive
       mv /etc/nginx/nginx_template.conf /etc/nginx/nginx.conf
-      rm /etc/nginx/sites-enabled/default  
+      wget https://raw.githubusercontent.com/funkestefan/terraform-examples/master/wordpress-setup/conf/nginx-lb.default -O /etc/nginx/sites-enabled/default
+      service nginx restart
       /tmp/consul-install.sh
       until consul join 192.168.42.2 192.168.42.3 192.168.42.4; do sleep 2; done
     permissions: 0700

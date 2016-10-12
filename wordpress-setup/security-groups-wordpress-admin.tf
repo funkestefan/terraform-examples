@@ -66,3 +66,13 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_consul_3" 
   remote_ip_prefix = "${var.localnet}"
   security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
 }
+
+resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_admin_consul_4" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  protocol = "tcp"
+  port_range_min = 8500
+  port_range_max = 8500
+  remote_ip_prefix = "${var.localnet}"
+  security_group_id = "${openstack_networking_secgroup_v2.secgroup_wordpress_admin.id}"
+}

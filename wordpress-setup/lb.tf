@@ -1,8 +1,16 @@
+data "template_file" "userdata" {
+    template = "${file("cloud-init/wordpress-lb.tpl")}"
+    vars {
+        foobar = "${var.finalhostname}"
+    }
+}
+
 resource "openstack_compute_instance_v2" "terraform-lb" {
   name = "terra-wordpress-lb"
   image_name = "${var.image}"
   flavor_name = "${var.flavormicro}"
-  user_data = "${file("cloud-init/wordpress-lb.yaml")}"
+  # user_data = "${file("cloud-init/wordpress-lb.yaml")}"
+  user_data = "${data.template_file.userdata.rendered}"
   security_groups = [ "${openstack_networking_secgroup_v2.secgroup_wordpress.id}" ]
   floating_ip = "${openstack_compute_floatingip_v2.wordpressip.address}"
   network {

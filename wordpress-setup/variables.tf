@@ -20,6 +20,7 @@ variable "pool" {
 
 variable "tenant_name" {
     default = "syseleveneigenbedarf-sfunke-sf-techdemo"
+    # default = "syseleveneigenbedarf-syseleven-employee-sfunke"
 }
 
 variable "sshallow" {
@@ -31,7 +32,7 @@ variable "localnet" {
 }
 
 variable "homenet" {
-    default = "91.66.60.79/32"
+    default = "91.65.253.4/32"
 }
 
 variable "db_volume" {

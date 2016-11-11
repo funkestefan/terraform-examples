@@ -39,3 +39,8 @@ resource "openstack_compute_floatingip_v2" "adminip" {
   pool = "${var.pool}"
   depends_on = ["openstack_networking_router_interface_v2.terraform"]
 }
+
+provider "cloudflare" {
+  email = "${var.cloudflare_account}"
+  token = "${var.cloudflare_apikey}"
+}

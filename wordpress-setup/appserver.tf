@@ -1,7 +1,7 @@
 resource "openstack_compute_instance_v2" "terraform-app" {
   depends_on = ["openstack_compute_instance_v2.terraform-storage-master"]
   name = "terra-wordpress-app${count.index}"
-  count = "4"
+  count = "2"
   image_name = "${var.image}"
   flavor_name = "${var.flavormicro}"
   user_data = "${file("cloud-init/wordpress-appserver.yaml")}"

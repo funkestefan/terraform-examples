@@ -27,8 +27,8 @@ write_files:
       export DEBIAN_FRONTEND=noninteractive
       mv /etc/nginx/nginx_template.conf /etc/nginx/nginx.conf
       rm /etc/nginx/sites-enabled/default  
-      apt-get install -y python-software-properties;
-      add-apt-repository -y ppa:gluster/glusterfs-3.5;
+      # apt-get install -y python-software-properties;
+      # add-apt-repository -y ppa:gluster/glusterfs-3.5;
       /tmp/consul-install-client.sh
 
     permissions: 0700

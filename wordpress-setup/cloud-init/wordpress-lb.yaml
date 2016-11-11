@@ -20,6 +20,7 @@ packages:
   - nginx
   - curl
   - unzip
+  - dnsmasq
 
 write_files:
   - content: |
@@ -27,9 +28,42 @@ write_files:
       export DEBIAN_FRONTEND=noninteractive
       mv /etc/nginx/nginx_template.conf /etc/nginx/nginx.conf
       wget https://raw.githubusercontent.com/funkestefan/terraform-examples/master/wordpress-setup/conf/nginx-lb.default -O /etc/nginx/sites-enabled/default
+      # configure core nginx
+      cat <<EOF> /etc/nginx/nginx.conf
+      user www-data;
+      worker_processes auto;
+      pid /run/nginx.pid;
+
+      events {
+        worker_connections 768;
+      }
+
+      http {
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+        ssl_prefer_server_ciphers on;
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+        gzip on;
+        gzip_disable "msie6";
+
+        include /etc/nginx/upstream.conf;
+        include /etc/nginx/sites-enabled/*;
+      }
+      EOF
       service nginx restart
       /tmp/consul-install.sh
+      /tmp/consul-template-install.sh
       until consul join 192.168.42.2 192.168.42.3 192.168.42.4; do sleep 2; done
+      # setup dnsmasq to communicate via consul
+      echo "server=/consul./127.0.0.1#8600" > /etc/dnsmasq.d/10-consul
+      systemctl restart dnsmasq
     permissions: 0700
     path: /tmp/install_lb.sh
   - content: |
@@ -53,13 +87,13 @@ write_files:
              "server": true
        }
        EOF
-
+       
        cat <<EOF> /etc/systemd/system/consul.service
        [Unit]
        Description=consul agent
        Requires=network-online.target
        After=network-online.target
-
+       
        [Service]
        User=root
        EnvironmentFile=-/etc/default/consul
@@ -68,14 +102,62 @@ write_files:
        ExecStart=/usr/local/bin/consul agent \$OPTIONS -config-dir=/etc/consul.d
        ExecReload=/bin/kill -HUP \$MAINPID
        KillSignal=SIGINT
-
+       
        [Install]
        WantedBy=multi-user.target
        EOF
-
+       
        systemctl enable consul
        systemctl restart consul
     path: /tmp/consul-install.sh
+    owner: root
+    permissions: 0700
+  - content: |
+       #!/usr/bin/env bash
+       until id stefan > /dev/null; do sleep 2; done
+       url="https://releases.hashicorp.com/consul-template/0.16.0/consul-template_0.16.0_linux_amd64.zip"
+       bin="/usr/local/bin"
+       tmp="/tmp/consul-template.zip"
+       /bin/mkdir -p $bin
+       /usr/bin/curl -s -o $tmp $url
+       /usr/bin/unzip -q $tmp -d $bin
+       /bin/chown root:root $bin/consul-template
+       if [ -f $tmp ]; then rm $tmp; fi
+       if [ ! -x $bin/consul ]; then exit 99; fi
+       mkdir -p /etc/consul.d
+       # generate a upstream-template used by consul-template
+       cat <<EOF> /opt/consul-http-upstreams.ctpl
+       upstream wp-appserver  {
+         least_conn;
+         {{range service "nginx"}}server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
+         {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+       }
+       EOF
+       
+       # configure and run consul-template for nginx:
+       
+       cat <<EOF> /etc/systemd/system/consultemplate-upstreams.service
+       [Unit]
+       Description=consul-template for nginx upstreams
+       Requires=network-online.target
+       After=network-online.target
+       
+       [Service]
+       User=root
+       EnvironmentFile=-/etc/default/consul-template
+       Environment=GOMAXPROCS=2
+       Restart=on-failure
+       ExecStart=/usr/local/bin/consul-template -template "/opt/consul-http-upstreams.ctpl:/etc/nginx/upstream.conf:service nginx restart"
+       ExecReload=/bin/kill -HUP \$MAINPID
+       KillSignal=SIGINT
+       
+       [Install]
+       WantedBy=multi-user.target
+       EOF
+       
+       systemctl enable consultemplate-upstreams
+       systemctl restart consultemplate-upstreams
+    path: /tmp/consul-template-install.sh
     owner: root
     permissions: 0700
 
